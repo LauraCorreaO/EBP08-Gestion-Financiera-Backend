@@ -17,10 +17,22 @@ public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
 
     public Categoria crearCategoriaPersonalizada(Categoria categoria) {
+        if (categoria.getNombre() == null || categoria.getNombre().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre de la categoría no puede ser vacío.");
+        }
+        if (categoria.getTipo() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El tipo de la categoría no puede ser nulo.");
+        }
+        if (categoria.getUsuario() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La categoría personalizada debe estar asociada a un usuario.");
+        }
         return categoriaRepository.save(categoria);
     }
 
     public List<Categoria> obtenerCategoriasUsuario(Long idUsuario) {
+        if (idUsuario == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El ID del usuario no puede ser nulo.");
+        }
         return categoriaRepository.findByUsuarioIsNullOrUsuarioId(idUsuario);
     }
 
