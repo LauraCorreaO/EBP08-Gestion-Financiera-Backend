@@ -32,7 +32,7 @@ public class Usuario {
     @Column(name = "fecha_registro") // En DB es mejor snake_case
     private LocalDateTime fechaRegistro;
 
-    @Enumerated(EnumType.STRING) // Para la DB
+    @Enumerated(EnumType.STRING) // Para la DB,sirve para decirle a la base de datos como guardar el enum, en este caso en texto
     private Estado estado;
 
 }
