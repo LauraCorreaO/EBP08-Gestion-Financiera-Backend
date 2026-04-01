@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -31,7 +30,7 @@ public class Presupuesto {
     private Usuario usuario;
 
     // Para la DB
-    @ManyToOne // UN presupuesto pertenece a UNA categoria
+    @ManyToOne // UN presupuesto puede pertenece a UNA categoria
     @JoinColumn(name = "id_categoria", nullable = true)
     private Categoria categoria;
 
