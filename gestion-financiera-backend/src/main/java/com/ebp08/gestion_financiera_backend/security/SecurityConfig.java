@@ -37,7 +37,13 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/v3/api-docs.yaml"
                 ).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().authenticated() // Eso significa qué:
+                    /*
+                    *cualquier endpoint* que no esté en la lista de rutas públicas
+                     ya requiere token válido automáticamente. O sea `/api/categorias/**`,
+                     `/api/transacciones/**`, `/api/presupuestos/**` ya están protegidos
+                     sin que hagas nada adicional.
+                     */
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

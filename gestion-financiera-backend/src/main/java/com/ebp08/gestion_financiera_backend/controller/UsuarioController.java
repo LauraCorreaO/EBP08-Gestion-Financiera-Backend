@@ -33,6 +33,13 @@ public class UsuarioController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         Optional<String> token = usuarioService.verificarCredenciales(loginRequest.getCorreo(), loginRequest.getClave());
-        return ResponseEntity.status(200).body(token.orElse(null)); // 200: OK
+        return ResponseEntity.status(200).body(token.orElse(null));
+        // Devuelve el 200: OK y el JWT que expirará en 30 días
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> cerrarSesion(){
+        return ResponseEntity.ok("Sesion cerrada exitosamente.");
+        // Aquí desde el Front se debería borrar el JWT
     }
 }
