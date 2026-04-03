@@ -1,6 +1,7 @@
 package com.ebp08.gestion_financiera_backend.security;
 
 import java.util.Date;
+import java.util.Base64;
 
 import javax.crypto.SecretKey;
 
@@ -21,7 +22,8 @@ public class JwtUtil {
     private long expiration;
 
     private SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        byte[] keyBytes = Base64.getDecoder().decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // Genera un token con el correo del usuario como identificador

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @AllArgsConstructor
@@ -46,8 +47,9 @@ public class JwtFilter extends OncePerRequestFilter {
             // Le dice a Spring Security quién es el usuario y que ya está autenticado
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            correo, // principal (identificador del usuario)
-                            null);   // credentials (no se necesitan porque el token ya es prueba de autenticación)
+                            correo,          // principal (identificador del usuario)
+                            null,           // credentials (no necesitamos la contraseña aquí)
+                            List.of());     // authorities (roles o permisos, aquí vacío)
 
             authentication.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request)
