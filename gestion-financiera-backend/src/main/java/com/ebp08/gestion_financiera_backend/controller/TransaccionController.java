@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody; // Importa la anotac
 import org.springframework.web.bind.annotation.RequestMapping; // Importa la anotación para definir la ruta base del controlador.
 import org.springframework.web.bind.annotation.RestController; // Importa la anotación que marca esta clase como controlador REST.
 
+import com.ebp08.gestion_financiera_backend.dto.CrearTransaccionRequest;
 import com.ebp08.gestion_financiera_backend.entity.Transaccion; // Importa la entidad Transaccion porque este controlador recibe y devuelve transacciones.
 import com.ebp08.gestion_financiera_backend.service.TransaccionService; // Importa el servicio de transacciones, que contiene la lógica de negocio.
 
@@ -26,10 +27,10 @@ public class TransaccionController {
 
     private final TransaccionService transaccionService; // Inyecta el servicio de transacciones para usar su lógica desde el controlador.
 
-    @PostMapping // Este endpoint responde a peticiones POST en /api/transacciones.
-    public ResponseEntity<Transaccion> crearTransaccion(@RequestBody Transaccion transaccion) { // Recibe una transacción en formato JSON desde el body del request.
-        Transaccion nuevaTransaccion = transaccionService.crearTransaccion(transaccion); // Llama al servicio para validar y guardar la transacción.
-        return ResponseEntity.status(201).body(nuevaTransaccion); // Devuelve respuesta HTTP 201 Created con la transacción creada en el body.
+    @PostMapping
+    public ResponseEntity<Transaccion> crearTransaccion(@RequestBody CrearTransaccionRequest request) {  // Recibe un JSON en el body y lo convierte en un objeto CrearTransaccionRequest.
+        Transaccion t = transaccionService.crearTransaccion(request);
+        return ResponseEntity.status(201).body(t);  // Devuelve respuesta HTTP 201 Created con la transacción creada en el cuerpo de la respuesta.
     }
     @GetMapping("/usuario/{idUsuario}") // Este endpoint responde a peticiones GET en /api/transacciones/usuario/{idUsuario}.
     public ResponseEntity<List<Transaccion>> obtenerTransaccionesUsuario(@PathVariable Long idUsuario) { // Toma el idUsuario desde la URL.
