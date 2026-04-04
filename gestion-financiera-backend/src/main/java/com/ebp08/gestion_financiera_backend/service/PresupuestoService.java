@@ -8,10 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.ebp08.gestion_financiera_backend.dto.CrearPresupuestoCategoriaRequest;
+import com.ebp08.gestion_financiera_backend.dto.CrearPresupuestoGlobalRequest;
 import com.ebp08.gestion_financiera_backend.entity.Categoria;
 import com.ebp08.gestion_financiera_backend.entity.Presupuesto;
 import com.ebp08.gestion_financiera_backend.entity.Usuario;
+import com.ebp08.gestion_financiera_backend.repository.CategoriaRepository;
 import com.ebp08.gestion_financiera_backend.repository.PresupuestoRepository;
+import com.ebp08.gestion_financiera_backend.repository.UsuarioRepository;
 
 
 import lombok.AllArgsConstructor;
@@ -23,9 +27,15 @@ import lombok.AllArgsConstructor;
 public class PresupuestoService {
 
     private final PresupuestoRepository presupuestoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final CategoriaRepository categoriaRepository;
     
     // crear un presupuesto global 
-    public Presupuesto crearPresupuestoGlobal(Presupuesto presupuesto) {
+    public Presupuesto crearPresupuestoGlobal(CrearPresupuestoGlobalRequest request) {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setUsuario(usuarioRepository.findById(request.getIdUsuario()).orElse(null));
+        presupuesto.setMontoLimite(request.getMontoLimite());
+        presupuesto.setCategoria(null); // Un presupuesto global no tiene categoría
     
     // Busca si ya existe un presupuesto global para este usuario en el mes actual
     Optional<Presupuesto> existente = presupuestoRepository
@@ -35,6 +45,9 @@ public class PresupuestoService {
         // Si existe, actualiza el monto del mismo
         Presupuesto presupuestoActual = existente.get();
         presupuestoActual.setMontoLimite(presupuesto.getMontoLimite());
+        presupuestoActual.setFechaLimite(LocalDateTime.now()
+            .withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
+            .withHour(23).withMinute(59).withSecond(59));
         return presupuestoRepository.save(presupuestoActual); // Actualiza el presupuesto existente
     }
 
@@ -47,8 +60,12 @@ public class PresupuestoService {
     
     }
     // Crear un presupuesto específico para una categoría
-    public Presupuesto crearPresupuestoCategoria(Presupuesto presupuesto) {
-        
+    public Presupuesto crearPresupuestoCategoria(CrearPresupuestoCategoriaRequest request) {
+        Presupuesto presupuesto = new Presupuesto();
+        presupuesto.setUsuario(usuarioRepository.findById(request.getIdUsuario()).orElse(null));
+        presupuesto.setCategoria(categoriaRepository.findById(request.getIdCategoria()).orElse(null));
+        presupuesto.setMontoLimite(request.getMontoLimite());
+
         Categoria categoria = presupuesto.getCategoria();
         Usuario usuario = presupuesto.getUsuario();
 
@@ -67,11 +84,17 @@ public class PresupuestoService {
             // Si existe, actualiza el monto y la fecha límite
             Presupuesto presupuestoActual = existente.get();
             presupuestoActual.setMontoLimite(presupuesto.getMontoLimite());
-            presupuestoActual.setFechaLimite(presupuesto.getFechaLimite());
+            presupuestoActual.setFechaLimite(LocalDateTime.now()
+                .withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
+                .withHour(23).withMinute(59).withSecond(59));
             return presupuestoRepository.save(presupuestoActual); // Actualiza el presupuesto existente
         }
 
-        // Si no existe, crea uno nuevo
+        // Si no existe, asigna fecha límite y crea uno nuevo
+        presupuesto.setFechaLimite(LocalDateTime.now()
+            .withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
+            .withHour(23).withMinute(59).withSecond(59));
+        
         return presupuestoRepository.save(presupuesto); // Crea un nuevo presupuesto por categoría
     }
 

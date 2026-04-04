@@ -15,6 +15,7 @@ public interface PresupuestoRepository extends JpaRepository<Presupuesto, Long> 
 
     // Consulta personalizada para encontrar un presupuesto global del mes actual por usuario
     @Query("SELECT p FROM Presupuesto p WHERE p.usuario.id = :usuarioId " + // Filtra por usuario
+       "AND p.categoria IS NULL " + // Filtra presupuesto global (sin categoría)
        "AND MONTH(p.fechaLimite) = MONTH(CURRENT_DATE) " +// Filtra por mes actual
        "AND YEAR(p.fechaLimite) = YEAR(CURRENT_DATE)")// Filtra por año actual
 

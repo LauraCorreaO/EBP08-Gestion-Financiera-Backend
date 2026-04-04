@@ -2,7 +2,7 @@ package com.ebp08.gestion_financiera_backend.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,6 +46,6 @@ public class Presupuesto {
     // Para la DB, cambio de nombre
     @Column(name = "fecha_limite") // En DB es mejor snake_case
     @NotNull(message = "La fecha límite es obligatoria")
-    @Future(message = "La fecha límite debe ser en el futuro")
+    @FutureOrPresent(message = "La fecha límite debe ser hoy o en el futuro")
     private LocalDateTime fechaLimite;
 }
