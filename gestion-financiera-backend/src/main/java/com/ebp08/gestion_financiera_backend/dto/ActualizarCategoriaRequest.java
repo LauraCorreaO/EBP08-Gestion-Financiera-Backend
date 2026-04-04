@@ -1,6 +1,5 @@
 package com.ebp08.gestion_financiera_backend.dto;
 
-import com.ebp08.gestion_financiera_backend.enums.TipoCategoria;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,4 @@ public class ActualizarCategoriaRequest {
 
     @NotBlank(message = "La descripción de la categoría es obligatoria")
     private String descripcion;
-
-    @NotNull(message = "El tipo de categoría es obligatorio")
-    private TipoCategoria tipo;
 }
