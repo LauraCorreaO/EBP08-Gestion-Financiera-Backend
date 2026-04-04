@@ -36,6 +36,10 @@ public class TransaccionService { // Define la clase de servicio para manejar la
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe enviar una categoría válida."); // Si no trae categoría, responde error 400.
         }
 
+        if (request.getTipo() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe enviar un tipo de transacción válido.");
+        }
+
         if (request.getMonto() == null || request.getMonto().trim().isEmpty()) { // Valida que el monto no sea nulo ni venga vacío.
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El monto es obligatorio."); // Si viene vacío, responde error 400.
         }
@@ -58,18 +62,11 @@ public class TransaccionService { // Define la clase de servicio para manejar la
         Categoria categoria = categoriaRepository.findById(request.getIdCategoria()) // Busca en la base de datos la categoría con el id enviado en el request.
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada.")); // Si no existe, responde error 404.
 
-        if (categoria.getUsuario() == null || categoria.getUsuario().getId() == null) { // Valida que la categoría tenga un usuario asociado.
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La transacción solo puede usar categorías personalizadas del usuario."); // Si no tiene usuario, responde error 400.
-        }
-
-        if (!categoria.getUsuario().getId().equals(usuario.getId())) { // Valida que la categoría pertenezca realmente al mismo usuario de la transacción.
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "La categoría no pertenece al usuario de la transacción."); // Si pertenece a otro usuario, responde error 403.
-        }
-
         Transaccion transaccion = new Transaccion(); // Crea un nuevo objeto Transaccion vacío.
 
         transaccion.setUsuario(usuario); // Asigna a la transacción el usuario real obtenido desde la base de datos.
         transaccion.setCategoria(categoria); // Asigna a la transacción la categoría real obtenida desde la base de datos.
+        transaccion.setTipo(request.getTipo());
         transaccion.setMonto(monto); // Asigna el monto ya validado y convertido.
         transaccion.setFecha(LocalDateTime.now()); // Asigna automáticamente la fecha y hora actual del sistema.
 

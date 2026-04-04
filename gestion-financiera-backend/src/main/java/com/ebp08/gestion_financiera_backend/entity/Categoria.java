@@ -1,6 +1,5 @@
 package com.ebp08.gestion_financiera_backend.entity;
 
-import com.ebp08.gestion_financiera_backend.enums.TipoCategoria;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +29,4 @@ public class Categoria {
     @ManyToOne // MUCHAS categorías pertenecen a UN usuario
     @JoinColumn(name = "id_usuario", nullable = true)
     private Usuario usuario;
-
-    @Enumerated(EnumType.STRING) // Para la DB
-    private TipoCategoria tipo;
 }
