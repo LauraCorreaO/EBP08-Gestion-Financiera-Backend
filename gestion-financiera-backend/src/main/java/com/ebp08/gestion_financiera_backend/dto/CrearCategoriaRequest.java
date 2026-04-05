@@ -1,7 +1,6 @@
 package com.ebp08.gestion_financiera_backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +16,5 @@ public class CrearCategoriaRequest {
     @NotBlank(message = "La descripción de la categoría es obligatoria")
     private String descripcion;
 
-    @NotNull(message = "El ID del usuario es obligatorio")
-    private Long idUsuario;
+    
 }

@@ -15,61 +15,63 @@ import com.ebp08.gestion_financiera_backend.entity.Presupuesto;
 import com.ebp08.gestion_financiera_backend.entity.Usuario;
 import com.ebp08.gestion_financiera_backend.repository.CategoriaRepository;
 import com.ebp08.gestion_financiera_backend.repository.PresupuestoRepository;
-import com.ebp08.gestion_financiera_backend.repository.UsuarioRepository;
-
+import com.ebp08.gestion_financiera_backend.security.SecurityHelper;
 
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-
-
 public class PresupuestoService {
 
     private final PresupuestoRepository presupuestoRepository;
-    private final UsuarioRepository usuarioRepository;
     private final CategoriaRepository categoriaRepository;
+    private final SecurityHelper securityHelper;
     
     // crear un presupuesto global 
     public Presupuesto crearPresupuestoGlobal(CrearPresupuestoGlobalRequest request) {
+        
+        Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
+        
         Presupuesto presupuesto = new Presupuesto();
-        presupuesto.setUsuario(usuarioRepository.findById(request.getIdUsuario()).orElse(null));
+        presupuesto.setUsuario(usuarioAutenticado);
         presupuesto.setMontoLimite(request.getMontoLimite());
         presupuesto.setCategoria(null); // Un presupuesto global no tiene categoría
     
-    // Busca si ya existe un presupuesto global para este usuario en el mes actual
-    Optional<Presupuesto> existente = presupuestoRepository
-        .findByUsuarioIdAndMesActual(presupuesto.getUsuario().getId());
+        // Busca si ya existe un presupuesto global para este usuario en el mes actual
+        Optional<Presupuesto> existente = presupuestoRepository
+            .findByUsuarioIdAndMesActual(presupuesto.getUsuario().getId());
 
-    if (existente.isPresent()) {
-        // Si existe, actualiza el monto del mismo
-        Presupuesto presupuestoActual = existente.get();
-        presupuestoActual.setMontoLimite(presupuesto.getMontoLimite());
-        presupuestoActual.setFechaLimite(LocalDateTime.now()
+        if (existente.isPresent()) {
+            // Si existe, actualiza el monto del mismo
+            Presupuesto presupuestoActual = existente.get();
+            presupuestoActual.setMontoLimite(presupuesto.getMontoLimite());
+            presupuestoActual.setFechaLimite(LocalDateTime.now()
+                .withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
+                .withHour(23).withMinute(59).withSecond(59));
+            return presupuestoRepository.save(presupuestoActual); // Actualiza el presupuesto existente
+        }
+
+        // Si no existe, asigna fecha límite y crea uno nuevo
+        presupuesto.setFechaLimite(LocalDateTime.now()
             .withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
             .withHour(23).withMinute(59).withSecond(59));
-        return presupuestoRepository.save(presupuestoActual); // Actualiza el presupuesto existente
-    }
 
-    // Si no existe, asigna fecha límite y crea uno nuevo
-    presupuesto.setFechaLimite(LocalDateTime.now()
-        .withDayOfMonth(LocalDateTime.now().toLocalDate().lengthOfMonth())
-        .withHour(23).withMinute(59).withSecond(59));
-
-    return presupuestoRepository.save(presupuesto); // Crea un nuevo presupuesto global
-    
+        return presupuestoRepository.save(presupuesto); // Crea un nuevo presupuesto global
     }
     // Crear un presupuesto específico para una categoría
     public Presupuesto crearPresupuestoCategoria(CrearPresupuestoCategoriaRequest request) {
+        
+        Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
+        
         Presupuesto presupuesto = new Presupuesto();
-        presupuesto.setUsuario(usuarioRepository.findById(request.getIdUsuario()).orElse(null));
+        presupuesto.setUsuario(usuarioAutenticado);
         presupuesto.setCategoria(categoriaRepository.findById(request.getIdCategoria()).orElse(null));
         presupuesto.setMontoLimite(request.getMontoLimite());
 
         Categoria categoria = presupuesto.getCategoria();
         Usuario usuario = presupuesto.getUsuario();
 
-        // Validación: la categoría debe pertenecer al usuario
+        // Validación: la categoría debe pertenecer al usuario autenticado
         if (categoria.getUsuario() == null || 
             !categoria.getUsuario().getId().equals(usuario.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
@@ -99,6 +101,9 @@ public class PresupuestoService {
     }
 
     public List<Presupuesto> obtenerPresupuestoUsuario(Long idUsuario) {
+        // Validar que el usuario autenticado sea quien solicita sus propios presupuestos
+        securityHelper.validarPropiedad(idUsuario);
+        
         // para obtener el presupuesto de un usuario.
         return presupuestoRepository.findByUsuarioId(idUsuario);
     }

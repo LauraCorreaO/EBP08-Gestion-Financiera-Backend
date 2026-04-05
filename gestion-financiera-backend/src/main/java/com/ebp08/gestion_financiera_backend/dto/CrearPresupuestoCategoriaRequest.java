@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 @Data
 public class CrearPresupuestoCategoriaRequest {
 
-    private Long idUsuario;
+   
     private Long idCategoria;   
     private BigDecimal montoLimite;
 

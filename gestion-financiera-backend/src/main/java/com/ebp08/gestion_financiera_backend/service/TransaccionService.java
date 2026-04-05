@@ -14,7 +14,7 @@ import com.ebp08.gestion_financiera_backend.entity.Transaccion; // Importa la en
 import com.ebp08.gestion_financiera_backend.entity.Usuario; // Importa la entidad Usuario porque una transacción debe pertenecer a un usuario.
 import com.ebp08.gestion_financiera_backend.repository.CategoriaRepository; // Importa el repositorio de categorías para buscar categorías en la base de datos.
 import com.ebp08.gestion_financiera_backend.repository.TransaccionRepository; // Importa el repositorio de transacciones para guardar, buscar y borrar transacciones.
-import com.ebp08.gestion_financiera_backend.repository.UsuarioRepository; // Importa el repositorio de usuarios para validar que el usuario exista.
+import com.ebp08.gestion_financiera_backend.security.SecurityHelper; // Importa el helper de seguridad para obtener el usuario autenticado.
 
 import lombok.AllArgsConstructor; // Importa Lombok para generar automáticamente un constructor con todos los atributos final.
 
@@ -24,13 +24,9 @@ public class TransaccionService { // Define la clase de servicio para manejar la
 
     private final TransaccionRepository transaccionRepository; // Repositorio para operaciones de base de datos sobre transacciones.
     private final CategoriaRepository categoriaRepository; // Repositorio para buscar categorías existentes.
-    private final UsuarioRepository usuarioRepository; // Repositorio para buscar usuarios existentes.
+    private final SecurityHelper securityHelper; // Helper de seguridad para obtener el usuario autenticado.
 
     public Transaccion crearTransaccion(CrearTransaccionRequest request) { // Método para crear una nueva transacción a partir de los datos del DTO.
-
-        if (request.getIdUsuario() == null) { // Valida que el request traiga el id del usuario.
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe enviar un usuario válido."); // Si no trae usuario, responde error 400.
-        }
 
         if (request.getIdCategoria() == null) { // Valida que el request traiga el id de la categoría.
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe enviar una categoría válida."); // Si no trae categoría, responde error 400.
@@ -56,15 +52,20 @@ public class TransaccionService { // Define la clase de servicio para manejar la
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El monto debe ser mayor a cero."); // Si es cero o negativo, responde error 400.
         }
 
-        Usuario usuario = usuarioRepository.findById(request.getIdUsuario()) // Busca en la base de datos el usuario con el id enviado en el request.
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.")); // Si no existe, responde error 404.
+        
+        Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
 
         Categoria categoria = categoriaRepository.findById(request.getIdCategoria()) // Busca en la base de datos la categoría con el id enviado en el request.
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada.")); // Si no existe, responde error 404.
 
+        // Validar que la categoría pertenezca al usuario autenticado (o sea una categoría global)
+        if (categoria.getUsuario() != null && !categoria.getUsuario().getId().equals(usuarioAutenticado.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No tienes permiso para usar esta categoría.");
+        }
+
         Transaccion transaccion = new Transaccion(); // Crea un nuevo objeto Transaccion vacío.
 
-        transaccion.setUsuario(usuario); // Asigna a la transacción el usuario real obtenido desde la base de datos.
+        transaccion.setUsuario(usuarioAutenticado); // Asigna el usuario autenticado a la transacción.
         transaccion.setCategoria(categoria); // Asigna a la transacción la categoría real obtenida desde la base de datos.
         transaccion.setTipo(request.getTipo());
         transaccion.setMonto(monto); // Asigna el monto ya validado y convertido.
@@ -85,18 +86,20 @@ public class TransaccionService { // Define la clase de servicio para manejar la
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El id del usuario no puede ser nulo."); // Si es nulo, responde error 400.
         }
 
-        if (!usuarioRepository.existsById(idUsuario)) { // Verifica si el usuario existe realmente en la base de datos.
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado."); // Si no existe, responde error 404.
-        }
+        // Validar que el usuario autenticado sea quien solicita sus propias transacciones
+        securityHelper.validarPropiedad(idUsuario);
 
         return transaccionRepository.findByUsuarioId(idUsuario); // Busca y devuelve todas las transacciones que pertenezcan a ese usuario.
     }
 
-    public void eliminarTransaccion(Long idTransaccion, Long idUsuario) { // Método para eliminar una transacción específica de un usuario específico.
+    /*public void eliminarTransaccion(Long idTransaccion, Long idUsuario) { // Método para eliminar una transacción específica de un usuario específico.
+
+        // Validar que el usuario autenticado sea quien intenta eliminar su transacción
+        securityHelper.validarPropiedad(idUsuario);
 
         Transaccion transaccion = transaccionRepository.findByIdAndUsuarioId(idTransaccion, idUsuario) // Busca la transacción por id y además valida que pertenezca a ese usuario.
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacción no encontrada para ese usuario.")); // Si no existe o no pertenece al usuario, responde error 404.
 
         transaccionRepository.delete(transaccion); // Elimina la transacción encontrada de la base de datos.
-    }
+    }*/
 }
