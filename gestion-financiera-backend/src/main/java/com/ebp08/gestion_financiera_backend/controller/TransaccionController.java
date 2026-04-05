@@ -37,9 +37,9 @@ public class TransaccionController {
         List<Transaccion> transacciones = transaccionService.obtenerTransaccionesUsuario(idUsuario); // Llama al servicio para obtener la lista de transacciones del usuario.
         return ResponseEntity.ok(transacciones); // Devuelve respuesta HTTP 200 OK con la lista de transacciones.
     }
-    @DeleteMapping("/{idTransaccion}/usuario/{idUsuario}") // Este endpoint responde a peticiones DELETE en /api/transacciones/{idTransaccion}/usuario/{idUsuario}.
+    /*@DeleteMapping("/{idTransaccion}/usuario/{idUsuario}") // Este endpoint responde a peticiones DELETE en /api/transacciones/{idTransaccion}/usuario/{idUsuario}.
     public ResponseEntity<Void> eliminarTransaccion(@PathVariable Long idTransaccion, @PathVariable Long idUsuario) { // Toma de la URL el id de la transacción y el id del usuario.
         transaccionService.eliminarTransaccion(idTransaccion, idUsuario); // Llama al servicio para eliminar la transacción validando que pertenezca al usuario.
         return ResponseEntity.noContent().build(); // Devuelve respuesta HTTP 204 No Content, porque la eliminación fue exitosa y no se devuelve cuerpo.
-    }
+    }*/
 }

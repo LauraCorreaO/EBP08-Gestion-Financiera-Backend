@@ -1,8 +1,6 @@
 package com.ebp08.gestion_financiera_backend.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ebp08.gestion_financiera_backend.dto.ActualizarCategoriaRequest;
 import com.ebp08.gestion_financiera_backend.dto.CrearCategoriaRequest;
 import com.ebp08.gestion_financiera_backend.entity.Categoria;
@@ -34,7 +32,7 @@ public class CategoriaController {
         return ResponseEntity.status(200).body(categorias); // 200: OK
     }
 
-    @PutMapping
+   /*  @PutMapping
     public ResponseEntity<Categoria> actualizarCategoriaPersonalizada(@Valid @RequestBody ActualizarCategoriaRequest request) {
         Categoria categoriaActualizada = categoriaService.actualizarCategoriaPersonalizada(request);
         
@@ -45,7 +43,7 @@ public class CategoriaController {
     public ResponseEntity<Void>eliminarCategoriaPersonalizada(@PathVariable long idCategoria){ // el @pathvariable toma el valor que haya en {idCategoria} para usar esa categoría específica y eliminarla.
         categoriaService.eliminarCategoriaPersonalizada(idCategoria);
         return ResponseEntity.status(204).build(); // 204: No Content
-    }
+    }*/
 
     
 

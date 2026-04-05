@@ -52,7 +52,7 @@ public class TransaccionService { // Define la clase de servicio para manejar la
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El monto debe ser mayor a cero."); // Si es cero o negativo, responde error 400.
         }
 
-        // Obtener el usuario autenticado (no confiar en el idUsuario del request)
+        
         Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
 
         Categoria categoria = categoriaRepository.findById(request.getIdCategoria()) // Busca en la base de datos la categoría con el id enviado en el request.
@@ -92,7 +92,7 @@ public class TransaccionService { // Define la clase de servicio para manejar la
         return transaccionRepository.findByUsuarioId(idUsuario); // Busca y devuelve todas las transacciones que pertenezcan a ese usuario.
     }
 
-    public void eliminarTransaccion(Long idTransaccion, Long idUsuario) { // Método para eliminar una transacción específica de un usuario específico.
+    /*public void eliminarTransaccion(Long idTransaccion, Long idUsuario) { // Método para eliminar una transacción específica de un usuario específico.
 
         // Validar que el usuario autenticado sea quien intenta eliminar su transacción
         securityHelper.validarPropiedad(idUsuario);
@@ -101,5 +101,5 @@ public class TransaccionService { // Define la clase de servicio para manejar la
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacción no encontrada para ese usuario.")); // Si no existe o no pertenece al usuario, responde error 404.
 
         transaccionRepository.delete(transaccion); // Elimina la transacción encontrada de la base de datos.
-    }
+    }*/
 }

@@ -29,7 +29,7 @@ public class PresupuestoService {
     
     // crear un presupuesto global 
     public Presupuesto crearPresupuestoGlobal(CrearPresupuestoGlobalRequest request) {
-        // Obtener el usuario autenticado (no confiar en el idUsuario del request)
+        
         Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
         
         Presupuesto presupuesto = new Presupuesto();
@@ -60,7 +60,7 @@ public class PresupuestoService {
     }
     // Crear un presupuesto específico para una categoría
     public Presupuesto crearPresupuestoCategoria(CrearPresupuestoCategoriaRequest request) {
-        // Obtener el usuario autenticado (no confiar en el idUsuario del request)
+        
         Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
         
         Presupuesto presupuesto = new Presupuesto();

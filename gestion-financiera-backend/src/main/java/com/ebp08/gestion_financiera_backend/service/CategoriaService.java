@@ -21,7 +21,7 @@ public class CategoriaService {
     private final SecurityHelper securityHelper;
 
     public Categoria crearCategoriaPersonalizada(CrearCategoriaRequest request) {
-        // Obtener el usuario autenticado (no confiar en el idUsuario del request)
+       
         Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
 
         // Crear la categoría
@@ -44,7 +44,7 @@ public class CategoriaService {
         return categoriaRepository.findByUsuarioIsNullOrUsuarioId(idUsuario);
     }
 
-    public Categoria actualizarCategoriaPersonalizada(ActualizarCategoriaRequest request) {
+   /*  public Categoria actualizarCategoriaPersonalizada(ActualizarCategoriaRequest request) {
         // Buscar la categoría por ID
         Categoria categoria = categoriaRepository.findById(request.getId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada."));
@@ -76,5 +76,5 @@ public class CategoriaService {
         securityHelper.validarPropiedad(categoria.getUsuario().getId());
 
         categoriaRepository.deleteById(idCategoria);
-    }
+    }*/
 }

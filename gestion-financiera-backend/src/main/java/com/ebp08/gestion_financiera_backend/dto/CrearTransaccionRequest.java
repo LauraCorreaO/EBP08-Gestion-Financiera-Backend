@@ -7,7 +7,6 @@ import lombok.Data;
 
 public class CrearTransaccionRequest {
 
-    private Long idUsuario;
     private Long idCategoria;
     private TipoTransaccion tipo;
     private String descripcion;
