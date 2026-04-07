@@ -1,0 +1,113 @@
+error id: file:///C:/Users/LauraCorreaOchoa/Desktop/Laura/2026-1/EBP08-Gestion-Financiera-Backend/gestion-financiera-backend/src/main/java/com/ebp08/gestion_financiera_backend/security/SecurityConfig.java:jakarta/servlet/http/HttpServletResponse#
+file:///C:/Users/LauraCorreaOchoa/Desktop/Laura/2026-1/EBP08-Gestion-Financiera-Backend/gestion-financiera-backend/src/main/java/com/ebp08/gestion_financiera_backend/security/SecurityConfig.java
+empty definition using pc, found symbol in pc: jakarta/servlet/http/HttpServletResponse#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 1119
+uri: file:///C:/Users/LauraCorreaOchoa/Desktop/Laura/2026-1/EBP08-Gestion-Financiera-Backend/gestion-financiera-backend/src/main/java/com/ebp08/gestion_financiera_backend/security/SecurityConfig.java
+text:
+```scala
+package com.ebp08.gestion_financiera_backend.security;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.MediaType;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import jakarta.servlet.http.@@HttpServletResponse;
+import lombok.AllArgsConstructor;
+
+@Configuration
+@EnableWebSecurity
+@AllArgsConstructor
+public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/api/usuarios/registro",
+                    "/api/usuarios/login",
+                    "/swagger-ui/**",
+                    "/swagger-ui.html",
+                    "/v3/api-docs/**",
+                    "/v3/api-docs.yaml"
+                ).permitAll()
+                .anyRequest().authenticated() // Eso significa qué:
+                    /*
+                    *cualquier endpoint* que no esté en la lista de rutas públicas
+                     ya requiere token válido automáticamente. O sea `/api/categorias/**`,
+                     `/api/transacciones/**`, `/api/presupuestos/**` ya están protegidos
+                     sin que hagas nada adicional.
+                     */
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) -> {
+                    writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "No autorizado", request.getRequestURI());
+                })
+            )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    // Bean para encriptar contraseñas con BCrypt
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://localhost:5174");
+        configuration.addAllowedOrigin("https://ebp08-gestion-financiera-backend.onrender.com");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    private void writeErrorResponse(HttpServletResponse response, int status, String message, String path) throws IOException {
+        response.setStatus(status);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", status);
+        body.put("error", status == HttpServletResponse.SC_UNAUTHORIZED ? "Unauthorized" : "Forbidden");
+        body.put("message", message);
+        body.put("path", path);
+
+        new ObjectMapper().writeValue(response.getWriter(), body);
+    }
+}
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: jakarta/servlet/http/HttpServletResponse#
