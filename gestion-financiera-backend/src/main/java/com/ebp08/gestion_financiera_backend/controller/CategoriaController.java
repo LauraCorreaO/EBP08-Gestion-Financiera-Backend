@@ -32,7 +32,7 @@ public class CategoriaController {
         return ResponseEntity.status(200).body(categorias); // 200: OK
     }
 
-   /*  @PutMapping
+    @PutMapping
     public ResponseEntity<Categoria> actualizarCategoriaPersonalizada(@Valid @RequestBody ActualizarCategoriaRequest request) {
         Categoria categoriaActualizada = categoriaService.actualizarCategoriaPersonalizada(request);
         
@@ -43,7 +43,7 @@ public class CategoriaController {
     public ResponseEntity<Void>eliminarCategoriaPersonalizada(@PathVariable long idCategoria){ // el @pathvariable toma el valor que haya en {idCategoria} para usar esa categoría específica y eliminarla.
         categoriaService.eliminarCategoriaPersonalizada(idCategoria);
         return ResponseEntity.status(204).build(); // 204: No Content
-    }*/
+    }
 
     
 
