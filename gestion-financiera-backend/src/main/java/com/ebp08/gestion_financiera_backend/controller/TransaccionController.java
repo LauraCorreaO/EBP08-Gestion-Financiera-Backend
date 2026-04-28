@@ -1,9 +1,7 @@
 package com.ebp08.gestion_financiera_backend.controller; // Indica que esta clase pertenece al paquete controller, donde van los endpoints HTTP.
 
-import java.time.LocalDateTime;
 import java.util.List; // Importa List porque vamos a devolver listas de transacciones.
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity; // Importa ResponseEntity para construir respuestas HTTP con estado y cuerpo.
 import org.springframework.web.bind.annotation.DeleteMapping; // Importa la anotación para manejar peticiones HTTP DELETE.
 import org.springframework.web.bind.annotation.GetMapping; // Importa la anotación para manejar peticiones HTTP GET.
@@ -11,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable; // Importa la anota
 import org.springframework.web.bind.annotation.PostMapping; // Importa la anotación para manejar peticiones HTTP POST.
 import org.springframework.web.bind.annotation.RequestBody; // Importa la anotación para leer el JSON del cuerpo de la petición.
 import org.springframework.web.bind.annotation.RequestMapping; // Importa la anotación para definir la ruta base del controlador.
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController; // Importa la anotación que marca esta clase como controlador REST.
 
 import com.ebp08.gestion_financiera_backend.dto.CrearTransaccionRequest;
