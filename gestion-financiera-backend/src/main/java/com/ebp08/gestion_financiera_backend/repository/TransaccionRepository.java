@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import com.ebp08.gestion_financiera_backend.entity.Transaccion; //Importa la entidad Transaccion, porque este repositorio va a trabajar con esa tabla/entidad.
+import com.ebp08.gestion_financiera_backend.enums.TipoTransaccion;
 
 public interface TransaccionRepository extends JpaRepository<Transaccion, Long> {
 
@@ -15,4 +16,10 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, Long> 
 
     // para el balance mensual acumulado y para el reporte de transacciones por fecha
     List<Transaccion> findByUsuarioIdAndFechaBetween(Long idUsuario, LocalDateTime fechaInicio, LocalDateTime fechaFin); // Busca todas las transacciones de un usuario específico que hayan ocurrido entre dos fechas dadas (fechaInicio y fechaFin).
+
+    List<Transaccion> findByCategoriaId(Long idCategoria);
+
+    List<Transaccion> findByUsuarioIdAndTipoOrderByFechaDesc(Long idUsuario, TipoTransaccion tipo);
+
+    List<Transaccion> findByUsuarioIdAndTipoAndFechaBetweenOrderByFechaDesc(Long idUsuario, TipoTransaccion tipo, LocalDateTime fechaInicio, LocalDateTime fechaFin);
 }
