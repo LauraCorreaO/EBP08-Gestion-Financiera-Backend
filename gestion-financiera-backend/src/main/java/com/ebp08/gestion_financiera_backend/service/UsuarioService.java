@@ -13,6 +13,7 @@ import com.ebp08.gestion_financiera_backend.entity.Usuario;
 import com.ebp08.gestion_financiera_backend.enums.Estado;
 import com.ebp08.gestion_financiera_backend.repository.UsuarioRepository;
 import com.ebp08.gestion_financiera_backend.security.JwtUtil;
+import com.ebp08.gestion_financiera_backend.security.SecurityHelper;
 
 import lombok.AllArgsConstructor;
 

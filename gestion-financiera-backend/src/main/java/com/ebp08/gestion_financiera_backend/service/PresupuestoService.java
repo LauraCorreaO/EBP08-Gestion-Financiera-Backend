@@ -108,15 +108,9 @@ public class PresupuestoService {
         return presupuestoRepository.save(presupuesto); // Crea un nuevo presupuesto por categoría
     }
 
-    public List<Presupuesto> obtenerPresupuestoUsuario(Long idUsuario) {
-        // Validar que el usuario autenticado sea quien solicita sus propios presupuestos
-        securityHelper.validarPropiedad(idUsuario);
-        
-        // para obtener el presupuesto de un usuario.
-        return presupuestoRepository.findByUsuarioId(idUsuario);
-    }
+    public ResumenPresupuestoGlobalResponse obtenerResumenPresupuestoGlobal() {
 
-    public ResumenPresupuestoGlobalResponse obtenerResumenPresupuestoGlobal(Long idUsuario) {
+        Long idUsuario = securityHelper.obtenerUsuarioAutenticado().getId();
         securityHelper.validarPropiedad(idUsuario);
 
         Optional<Presupuesto> presupuestoActual = presupuestoRepository.findByUsuarioIdAndMesActual(idUsuario);
@@ -139,7 +133,9 @@ public class PresupuestoService {
         );
     }
 
-    public List<ResumenPresupuestoCategoriaResponse> obtenerResumenPresupuestoCategorias(Long idUsuario) {
+    public List<ResumenPresupuestoCategoriaResponse> obtenerResumenPresupuestoCategorias() {
+        Long idUsuario = securityHelper.obtenerUsuarioAutenticado().getId();
+        
         securityHelper.validarPropiedad(idUsuario);
 
         List<Categoria> categorias = categoriaRepository.findByUsuarioIsNullOrUsuarioId(idUsuario);
@@ -149,10 +145,6 @@ public class PresupuestoService {
             .map(categoria -> construirResumenCategoria(categoria, idUsuario, transaccionesMes))
             .filter(java.util.Objects::nonNull)
             .toList();
-
-        if (resultado.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay presupuestos definidos para ninguna categoría.");
-        }
 
         return resultado;
     }

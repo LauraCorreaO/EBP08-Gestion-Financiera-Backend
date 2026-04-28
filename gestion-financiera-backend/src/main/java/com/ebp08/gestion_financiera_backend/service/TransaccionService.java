@@ -71,7 +71,9 @@ public class TransaccionService { // Define la clase de servicio para manejar la
         return transaccionRepository.save(transaccion); // Guarda la transacción en la base de datos y devuelve la entidad ya persistida.
     }
 
-    public List<Transaccion> obtenerTransaccionesUsuario(Long idUsuario) { // Método para listar todas las transacciones de un usuario específico.
+    public List<Transaccion> obtenerTransaccionesUsuario() { // Método para listar todas las transacciones de un usuario específico.
+
+        Long idUsuario = securityHelper.obtenerUsuarioAutenticado().getId(); // Obtiene el id del usuario autenticado desde el helper de seguridad, que a su vez lo obtiene del contexto de seguridad.
 
         if (idUsuario == null) { // Valida que el id del usuario no sea nulo.
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El id del usuario no puede ser nulo."); // Si es nulo, responde error 400.
@@ -83,7 +85,10 @@ public class TransaccionService { // Define la clase de servicio para manejar la
         return transaccionRepository.findByUsuarioId(idUsuario); // Busca y devuelve todas las transacciones que pertenezcan a ese usuario.
     }
 
-    public List<Transaccion> obtenerIngresosRecientes(Long idUsuario) {
+    public List<Transaccion> obtenerIngresosRecientes() {
+
+        Long idUsuario = securityHelper.obtenerUsuarioAutenticado().getId();
+
         if (idUsuario == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El id del usuario no puede ser nulo.");
         }
@@ -91,6 +96,19 @@ public class TransaccionService { // Define la clase de servicio para manejar la
         securityHelper.validarPropiedad(idUsuario);
 
         return transaccionRepository.findByUsuarioIdAndTipoOrderByFechaDesc(idUsuario, TipoTransaccion.INGRESO);
+    }
+
+    public List<Transaccion> obtenerGastosRecientes() {
+
+        Long idUsuario = securityHelper.obtenerUsuarioAutenticado().getId();
+
+        if (idUsuario == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El id del usuario no puede ser nulo.");
+        }
+
+        securityHelper.validarPropiedad(idUsuario);
+
+        return transaccionRepository.findByUsuarioIdAndTipoOrderByFechaDesc(idUsuario, TipoTransaccion.EGRESO);
     }
 
     private Categoria obtenerCategoriaSolicitadaOPorDefecto(Long idCategoria, Usuario usuarioAutenticado) {
@@ -110,11 +128,13 @@ public class TransaccionService { // Define la clase de servicio para manejar la
         return categoria;
     }
 
-    public void eliminarTransaccion(Long idTransaccion, Long idUsuario) {
+    public void eliminarTransaccion(Long idTransaccion) {
+
+        Long idUsuario = securityHelper.obtenerUsuarioAutenticado().getId();
         securityHelper.validarPropiedad(idUsuario);
 
         Transaccion transaccion = transaccionRepository.findByIdAndUsuarioId(idTransaccion, idUsuario)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacci�n no encontrada para ese usuario."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Transacción no encontrada para ese usuario."));
 
         transaccionRepository.delete(transaccion);
     }

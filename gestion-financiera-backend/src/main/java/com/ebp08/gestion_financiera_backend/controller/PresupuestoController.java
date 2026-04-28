@@ -40,22 +40,14 @@ public class PresupuestoController {
         return ResponseEntity.status(201).body(presupuestoNuevoPorCategoria); // 201: Created
     }
 
-
-    @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity <List<Presupuesto>>obtenerPresupuestoUsuario(@PathVariable Long idUsuario){
-        List<Presupuesto> presupuestosUsuario = presupuestoService.obtenerPresupuestoUsuario(idUsuario);
-        return ResponseEntity.status(200).body(presupuestosUsuario); // 200: OK
-
+    @GetMapping("/global/usuario")
+    public ResponseEntity<ResumenPresupuestoGlobalResponse> obtenerResumenPresupuestoGlobal() {
+        return ResponseEntity.ok(presupuestoService.obtenerResumenPresupuestoGlobal());
     }
 
-    @GetMapping("/global/usuario/{idUsuario}")
-    public ResponseEntity<ResumenPresupuestoGlobalResponse> obtenerResumenPresupuestoGlobal(@PathVariable Long idUsuario) {
-        return ResponseEntity.ok(presupuestoService.obtenerResumenPresupuestoGlobal(idUsuario));
-    }
-
-    @GetMapping("/categorias/usuario/{idUsuario}")
-    public ResponseEntity<List<ResumenPresupuestoCategoriaResponse>> obtenerResumenPresupuestoCategorias(@PathVariable Long idUsuario) {
-        return ResponseEntity.ok(presupuestoService.obtenerResumenPresupuestoCategorias(idUsuario));
+    @GetMapping("/categorias/usuario")
+    public ResponseEntity<List<ResumenPresupuestoCategoriaResponse>> obtenerResumenPresupuestoCategorias() {
+        return ResponseEntity.ok(presupuestoService.obtenerResumenPresupuestoCategorias());
     }
      
 

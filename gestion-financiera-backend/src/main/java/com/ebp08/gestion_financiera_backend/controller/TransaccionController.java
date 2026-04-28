@@ -33,21 +33,27 @@ public class TransaccionController {
         return ResponseEntity.status(201).body(t);
     }
 
-    @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<Transaccion>> obtenerTransaccionesUsuario(@PathVariable Long idUsuario) { // Toma el idUsuario desde la URL.
-        List<Transaccion> transacciones = transaccionService.obtenerTransaccionesUsuario(idUsuario);
+    @GetMapping("/usuario")
+    public ResponseEntity<List<Transaccion>> obtenerTransaccionesUsuario() {
+        List<Transaccion> transacciones = transaccionService.obtenerTransaccionesUsuario();
         return ResponseEntity.ok(transacciones);
     }
 
-    @GetMapping("/usuario/{idUsuario}/ingresos")
-    public ResponseEntity<List<Transaccion>> obtenerIngresosRecientes(@PathVariable Long idUsuario) {
-        List<Transaccion> ingresos = transaccionService.obtenerIngresosRecientes(idUsuario);
+    @GetMapping("/usuario/ingresos")
+    public ResponseEntity<List<Transaccion>> obtenerIngresosRecientes() {
+        List<Transaccion> ingresos = transaccionService.obtenerIngresosRecientes();
         return ResponseEntity.ok(ingresos);
     }
 
-    @DeleteMapping("/{idTransaccion}/usuario/{idUsuario}") // Toma de la URL el id de la transacción y el id del usuario.
-    public ResponseEntity<Void> eliminarTransaccion(@PathVariable Long idTransaccion, @PathVariable Long idUsuario) {
-        transaccionService.eliminarTransaccion(idTransaccion, idUsuario);
+    @GetMapping("/usuario/gastos")
+    public ResponseEntity<List<Transaccion>> obtenerGastosRecientes() {
+        List<Transaccion> gastos = transaccionService.obtenerGastosRecientes();
+        return ResponseEntity.ok(gastos);
+    }
+
+    @DeleteMapping("/{idTransaccion}/usuario") // Toma de la URL el id de la transacción y el id del usuario.
+    public ResponseEntity<Void> eliminarTransaccion(@PathVariable Long idTransaccion) {
+        transaccionService.eliminarTransaccion(idTransaccion);
         return ResponseEntity.noContent().build();  // Devuelve respuesta HTTP 204 No Content, porque la eliminación fue exitosa y no se devuelve cuerpo.
     }
 }
