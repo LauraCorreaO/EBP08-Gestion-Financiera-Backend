@@ -1,5 +1,7 @@
 package com.ebp08.gestion_financiera_backend.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -10,11 +12,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ebp08.gestion_financiera_backend.dto.CrearPresupuestoCategoriaRequest;
 import com.ebp08.gestion_financiera_backend.dto.CrearPresupuestoGlobalRequest;
+import com.ebp08.gestion_financiera_backend.dto.ResumenPresupuestoCategoriaResponse;
+import com.ebp08.gestion_financiera_backend.dto.ResumenPresupuestoGlobalResponse;
 import com.ebp08.gestion_financiera_backend.entity.Categoria;
 import com.ebp08.gestion_financiera_backend.entity.Presupuesto;
+import com.ebp08.gestion_financiera_backend.entity.Transaccion;
 import com.ebp08.gestion_financiera_backend.entity.Usuario;
 import com.ebp08.gestion_financiera_backend.repository.CategoriaRepository;
 import com.ebp08.gestion_financiera_backend.repository.PresupuestoRepository;
+import com.ebp08.gestion_financiera_backend.repository.TransaccionRepository;
+import com.ebp08.gestion_financiera_backend.enums.TipoTransaccion;
 import com.ebp08.gestion_financiera_backend.security.SecurityHelper;
 
 import lombok.AllArgsConstructor;
@@ -25,6 +32,7 @@ public class PresupuestoService {
 
     private final PresupuestoRepository presupuestoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final TransaccionRepository transaccionRepository;
     private final SecurityHelper securityHelper;
     
     // crear un presupuesto global 
@@ -108,9 +116,100 @@ public class PresupuestoService {
         return presupuestoRepository.findByUsuarioId(idUsuario);
     }
 
-    /*public boolean verificarLimiteAlcanzado(Long idPresupuesto){
-        
-    }*/
-    
+    public ResumenPresupuestoGlobalResponse obtenerResumenPresupuestoGlobal(Long idUsuario) {
+        securityHelper.validarPropiedad(idUsuario);
+
+        Optional<Presupuesto> presupuestoActual = presupuestoRepository.findByUsuarioIdAndMesActual(idUsuario);
+
+        if (presupuestoActual.isEmpty()) {
+            return ResumenPresupuestoGlobalResponse.sinPresupuesto();
+        }
+
+        Presupuesto presupuesto = presupuestoActual.get();
+        BigDecimal gastado = calcularGastoMensual(idUsuario, null);
+        BigDecimal disponible = presupuesto.getMontoLimite().subtract(gastado);
+        BigDecimal porcentajeUso = calcularPorcentajeUso(presupuesto.getMontoLimite(), gastado);
+
+        return ResumenPresupuestoGlobalResponse.conPresupuesto(
+            presupuesto.getMontoLimite(),
+            gastado,
+            disponible,
+            porcentajeUso,
+            presupuesto.getFechaLimite()
+        );
+    }
+
+    public List<ResumenPresupuestoCategoriaResponse> obtenerResumenPresupuestoCategorias(Long idUsuario) {
+        securityHelper.validarPropiedad(idUsuario);
+
+        List<Categoria> categorias = categoriaRepository.findByUsuarioIsNullOrUsuarioId(idUsuario);
+        List<Transaccion> transaccionesMes = obtenerTransaccionesMes(idUsuario);
+
+        List<ResumenPresupuestoCategoriaResponse> resultado = categorias.stream()
+            .map(categoria -> construirResumenCategoria(categoria, idUsuario, transaccionesMes))
+            .filter(java.util.Objects::nonNull)
+            .toList();
+
+        if (resultado.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No hay presupuestos definidos para ninguna categoría.");
+        }
+
+        return resultado;
+    }
+
+    private ResumenPresupuestoCategoriaResponse construirResumenCategoria(Categoria categoria, Long idUsuario, List<Transaccion> transaccionesMes) {
+        Optional<Presupuesto> presupuestoActual = presupuestoRepository.findByUsuarioIdAndCategoriaIdAndMesActual(idUsuario, categoria.getId());
+
+        if (presupuestoActual.isEmpty()) {
+            return null;
+        }
+
+        Presupuesto presupuesto = presupuestoActual.get();
+        BigDecimal gastado = calcularGastoPorCategoria(transaccionesMes, categoria.getId());
+        BigDecimal disponible = presupuesto.getMontoLimite().subtract(gastado);
+        BigDecimal porcentajeUso = calcularPorcentajeUso(presupuesto.getMontoLimite(), gastado);
+
+        return ResumenPresupuestoCategoriaResponse.de(
+            categoria.getId(),
+            categoria.getNombre(),
+            presupuesto.getMontoLimite(),
+            gastado,
+            disponible,
+            porcentajeUso,
+            presupuesto.getFechaLimite()
+        );
+    }
+
+    private List<Transaccion> obtenerTransaccionesMes(Long idUsuario) {
+        LocalDateTime inicioMes = LocalDateTime.now()
+            .withDayOfMonth(1)
+            .withHour(0)
+            .withMinute(0)
+            .withSecond(0)
+            .withNano(0);
+
+        return transaccionRepository.findByUsuarioIdAndFechaBetween(idUsuario, inicioMes, LocalDateTime.now());
+    }
+
+    private BigDecimal calcularGastoMensual(Long idUsuario, Long idCategoria) {
+        return calcularGastoPorCategoria(obtenerTransaccionesMes(idUsuario), idCategoria);
+    }
+
+    private BigDecimal calcularGastoPorCategoria(List<Transaccion> transaccionesMes, Long idCategoria) {
+        return transaccionesMes.stream()
+            .filter(transaccion -> transaccion.getTipo() == TipoTransaccion.EGRESO)
+            .filter(transaccion -> idCategoria == null || (transaccion.getCategoria() != null && idCategoria.equals(transaccion.getCategoria().getId())))
+            .map(Transaccion::getMonto)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal calcularPorcentajeUso(BigDecimal montoLimite, BigDecimal gastado) {
+        if (montoLimite == null || montoLimite.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+
+        return gastado.multiply(BigDecimal.valueOf(100))
+            .divide(montoLimite, 2, RoundingMode.HALF_UP);
+    }
 
 }

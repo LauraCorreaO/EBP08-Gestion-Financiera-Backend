@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import com.ebp08.gestion_financiera_backend.dto.CrearPresupuestoCategoriaRequest;
 import com.ebp08.gestion_financiera_backend.dto.CrearPresupuestoGlobalRequest;
+import com.ebp08.gestion_financiera_backend.dto.ResumenPresupuestoCategoriaResponse;
+import com.ebp08.gestion_financiera_backend.dto.ResumenPresupuestoGlobalResponse;
 
 
 @RestController
@@ -44,6 +46,16 @@ public class PresupuestoController {
         List<Presupuesto> presupuestosUsuario = presupuestoService.obtenerPresupuestoUsuario(idUsuario);
         return ResponseEntity.status(200).body(presupuestosUsuario); // 200: OK
 
+    }
+
+    @GetMapping("/global/usuario/{idUsuario}")
+    public ResponseEntity<ResumenPresupuestoGlobalResponse> obtenerResumenPresupuestoGlobal(@PathVariable Long idUsuario) {
+        return ResponseEntity.ok(presupuestoService.obtenerResumenPresupuestoGlobal(idUsuario));
+    }
+
+    @GetMapping("/categorias/usuario/{idUsuario}")
+    public ResponseEntity<List<ResumenPresupuestoCategoriaResponse>> obtenerResumenPresupuestoCategorias(@PathVariable Long idUsuario) {
+        return ResponseEntity.ok(presupuestoService.obtenerResumenPresupuestoCategorias(idUsuario));
     }
      
 
