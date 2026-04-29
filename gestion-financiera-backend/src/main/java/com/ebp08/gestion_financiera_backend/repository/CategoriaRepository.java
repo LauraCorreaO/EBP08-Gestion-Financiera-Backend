@@ -5,11 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     List<Categoria> findByUsuarioIsNullOrUsuarioId(Long idUsuario);
 
+    // Nuevo: necesario para validar propiedad de categoría en TransaccionProgramadaService
+    Optional<Categoria> findByIdAndUsuarioId(Long id, Long idUsuario);
     /* JPA entiende y traduce a SQL
         SELECT * FROM categoria
         WHERE usuario_id IS NULL
