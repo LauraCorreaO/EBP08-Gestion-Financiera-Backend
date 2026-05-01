@@ -49,11 +49,7 @@ public class TransaccionProgramada {
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
 
-    /* ------------------>   PARTE SIMÓNNNN
-     * Preparado para el proceso automático con @Scheduled (sprint futuro).
-     * Por ahora siempre se inicializa en null al crear.
-     * El job de scheduling lo actualizará cada vez que ejecute la transacción.
-     */
+
     @Column(name = "ultima_ejecucion")
     private LocalDateTime ultimaEjecucion;
 }
