@@ -171,6 +171,14 @@ public class TransaccionProgramadaService {
         return transaccionProgramadaRepository.findByUsuarioId(idUsuario);
     }
 
+    public List<TransaccionProgramada> listarIngresosProgramados() {
+        return listarTransaccionesProgramadasPorTipo(TipoTransaccion.INGRESO);
+    }
+
+    public List<TransaccionProgramada> listarEgresosProgramados() {
+        return listarTransaccionesProgramadasPorTipo(TipoTransaccion.EGRESO);
+    }
+
     public List<TransaccionProgramada> listarTransaccionesProgramadasPorTipo(TipoTransaccion tipo) {
 
         Long idUsuario = securityHelper.obtenerUsuarioAutenticado().getId();
