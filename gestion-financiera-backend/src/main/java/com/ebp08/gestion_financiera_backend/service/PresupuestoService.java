@@ -79,11 +79,16 @@ public class PresupuestoService {
         Categoria categoria = presupuesto.getCategoria();
         Usuario usuario = presupuesto.getUsuario();
 
-        // Validación: la categoría debe pertenecer al usuario autenticado
-        if (categoria.getUsuario() == null || 
+        // Validación: la categoría debe existir y debe ser del usuario autenticado
+        // o una categoría global (usuario == null).
+        if (categoria == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada.");
+        }
+
+        if (categoria.getUsuario() != null &&
             !categoria.getUsuario().getId().equals(usuario.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                "La categoría no pertenece al usuario.");
+                "La categoría no pertenece al usuario ni es global.");
         }
 
         // Buscar si ya existe un presupuesto para esta categoría en el mes actual

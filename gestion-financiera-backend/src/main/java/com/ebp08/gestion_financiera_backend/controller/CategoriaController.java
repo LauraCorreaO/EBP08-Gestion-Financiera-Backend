@@ -32,9 +32,11 @@ public class CategoriaController {
         return ResponseEntity.status(200).body(categorias); // 200: OK
     }
 
-    @PutMapping("/actualizarCategoriaPropia") //ruta para actualizar una categoría personalizada. Se recibe un JSON con los datos de la categoría a actualizar, incluyendo su id para identificarla.
-    public ResponseEntity<Categoria> actualizarCategoriaPersonalizada(@Valid @RequestBody ActualizarCategoriaRequest request) {
-        Categoria categoriaActualizada = categoriaService.actualizarCategoriaPersonalizada(request);
+    @PutMapping("/actualizarCategoriaPropia/{idCategoria}") //ruta para actualizar una categoría personalizada. Se recibe por path el id de la categoría y por body los campos a actualizar.
+    public ResponseEntity<Categoria> actualizarCategoriaPersonalizada(
+            @PathVariable Long idCategoria,
+            @Valid @RequestBody ActualizarCategoriaRequest request) {
+        Categoria categoriaActualizada = categoriaService.actualizarCategoriaPersonalizada(idCategoria, request);
         
         return ResponseEntity.status(200).body(categoriaActualizada); // 200: OK
     }

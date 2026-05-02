@@ -39,8 +39,8 @@ public class CategoriaService {
         return categoriaRepository.save(categoria);
     }
 
-    public Categoria actualizarCategoriaPersonalizada(ActualizarCategoriaRequest request) {
-        Categoria categoria = categoriaRepository.findById(request.getId())
+    public Categoria actualizarCategoriaPersonalizada(Long idCategoria, ActualizarCategoriaRequest request) {
+        Categoria categoria = categoriaRepository.findById(idCategoria)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada."));
 
         if (categoria.getUsuario() == null) {
