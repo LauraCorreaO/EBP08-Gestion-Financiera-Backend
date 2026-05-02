@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
 import com.ebp08.gestion_financiera_backend.dto.CrearPresupuestoCategoriaRequest;
 import com.ebp08.gestion_financiera_backend.dto.CrearPresupuestoGlobalRequest;
 import com.ebp08.gestion_financiera_backend.dto.ResumenPresupuestoCategoriaResponse;
@@ -50,10 +49,6 @@ public class PresupuestoController {
         return ResponseEntity.ok(presupuestoService.obtenerResumenPresupuestoCategorias());
     }
      
-
-
-
-
 }
     
 

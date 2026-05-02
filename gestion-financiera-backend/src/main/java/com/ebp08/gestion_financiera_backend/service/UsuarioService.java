@@ -24,6 +24,7 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final SecurityHelper securityHelper;
 
     public Usuario crearUsuario(RegistroRequest request) {
 
@@ -70,6 +71,24 @@ public class UsuarioService {
             }
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El correo " + correo + " no está registrado.");
+        }
+    }
+
+    public String actualizarClave(String claveAntigua, String claveNueva){
+        Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
+
+        if (passwordEncoder.matches(claveAntigua, usuarioAutenticado.getClave())){
+            // "matches" compara (textoPlano, textoEncriptado)
+            if (!passwordEncoder.matches(claveNueva, usuarioAutenticado.getClave())){
+
+                String claveEncriptada = passwordEncoder.encode(claveNueva);
+                usuarioAutenticado.setClave(claveEncriptada);
+                usuarioRepository.save(usuarioAutenticado);
+                return "Contraseña actualizada exitosamente.";
+
+            } throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_CONTENT, "La nueva contraseña no puede ser igual a la anterior.");
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "La contraseña actual es incorrecta.");
         }
     }
 }

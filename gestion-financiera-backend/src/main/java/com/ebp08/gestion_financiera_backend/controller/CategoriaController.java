@@ -5,7 +5,6 @@ import com.ebp08.gestion_financiera_backend.dto.ActualizarCategoriaRequest;
 import com.ebp08.gestion_financiera_backend.dto.CrearCategoriaRequest;
 import com.ebp08.gestion_financiera_backend.entity.Categoria;
 import com.ebp08.gestion_financiera_backend.service.CategoriaService;
-import com.ebp08.gestion_financiera_backend.service.UsuarioService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,6 @@ import java.util.List;
 public class CategoriaController {
 
     private final CategoriaService categoriaService;
-    private final UsuarioService usuarioService;
 
     @PostMapping("/crearCategoriaPropia") //ruta para crear una categoría personalizada para un usuario específico.
     public ResponseEntity<Categoria> crearCategoriaPersonalizada(@Valid @RequestBody CrearCategoriaRequest request) {
