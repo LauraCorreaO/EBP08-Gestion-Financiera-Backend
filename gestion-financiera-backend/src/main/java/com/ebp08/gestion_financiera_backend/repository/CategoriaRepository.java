@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     List<Categoria> findByUsuarioIsNullOrUsuarioId(Long idUsuario);
 
+    // Nuevo: necesario para validar propiedad de categoría en TransaccionProgramadaService
+    Optional<Categoria> findByIdAndUsuarioId(Long id, Long idUsuario);
     /* JPA entiende y traduce a SQL
         SELECT * FROM categoria
         WHERE usuario_id IS NULL
