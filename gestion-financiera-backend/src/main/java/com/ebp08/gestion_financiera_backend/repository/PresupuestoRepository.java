@@ -33,4 +33,6 @@ public interface PresupuestoRepository extends JpaRepository<Presupuesto, Long> 
         @Param("usuarioId") Long usuarioId, 
         @Param("categoriaId") Long categoriaId); // @param para pasar el id de la categoría como parámetro a la consulta personalizada
 
+   void deleteByCategoriaId(Long idCategoria);
+
 }

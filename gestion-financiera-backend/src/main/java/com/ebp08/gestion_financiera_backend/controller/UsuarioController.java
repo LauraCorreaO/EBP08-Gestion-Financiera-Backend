@@ -1,7 +1,7 @@
 package com.ebp08.gestion_financiera_backend.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.ebp08.gestion_financiera_backend.dto.ActualizarClaveRequest;
+import org.springframework.web.bind.annotation.*;
 
 import com.ebp08.gestion_financiera_backend.dto.LoginRequest;
 import com.ebp08.gestion_financiera_backend.dto.RegistroRequest;
@@ -13,8 +13,6 @@ import lombok.AllArgsConstructor;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
@@ -41,5 +39,11 @@ public class UsuarioController {
     public ResponseEntity<String> cerrarSesion(){
         return ResponseEntity.ok("Sesion cerrada exitosamente.");
         // Aquí desde el Front se debería borrar el JWT
+    }
+
+    @PutMapping("/actualizarClave")
+    public ResponseEntity<String> actualizarClave(@RequestBody ActualizarClaveRequest request){
+        String confirmacion = usuarioService.actualizarClave(request.getClaveAntigua(), request.getClaveNueva());
+        return ResponseEntity.ok(confirmacion);
     }
 }
