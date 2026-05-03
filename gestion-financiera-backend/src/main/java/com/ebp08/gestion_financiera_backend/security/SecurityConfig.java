@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -32,6 +33,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(
                     "/api/usuarios/registro",
                     "/api/usuarios/login",
@@ -72,6 +74,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:5173");
         configuration.addAllowedOrigin("http://localhost:5174");
+        configuration.addAllowedOrigin("https://ebp-08-gestion-financiera-frontend.vercel.app");
         configuration.addAllowedOrigin("https://ebp08-gestion-financiera-backend.onrender.com");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
