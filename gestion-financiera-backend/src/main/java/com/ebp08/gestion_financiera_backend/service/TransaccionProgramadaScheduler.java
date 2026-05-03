@@ -20,7 +20,7 @@ public class TransaccionProgramadaScheduler {
     private final TransaccionProgramadaRepository transaccionProgramadaRepository;
     private final TransaccionRepository transaccionRepository;
 
-    @Scheduled(cron = "0 0/2 * * * *") // Se ejecuta cada dia a las 00:00
+    @Scheduled(cron = "0 0 2 * * *") // Se ejecuta cada dia a las 20:00
     public void procesarTransaccionesProgramadas() {
         List<TransaccionProgramada> activas = transaccionProgramadaRepository
             .findByEstado(Estado.ACTIVO);
