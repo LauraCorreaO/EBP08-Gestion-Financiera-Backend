@@ -78,6 +78,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:5174");
         configuration.addAllowedOrigin("https://ebp-08-gestion-financiera-frontend.vercel.app");
         configuration.addAllowedOrigin("https://ebp08-gestion-financiera-backend.onrender.com");
+        configuration.addAllowedOrigin("https://ebp-08-gestion-financiera-frontend-psi.vercel.app");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
