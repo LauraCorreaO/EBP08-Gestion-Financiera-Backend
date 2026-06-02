@@ -62,6 +62,12 @@ public class UsuarioController {
     return ResponseEntity.ok("Contraseña actualizada exitosamente.");
 }
 
+    @GetMapping("/me")
+    public ResponseEntity<RegistroResponse> obtenerUsuarioActual() {
+        RegistroResponse usuario = usuarioService.obtenerUsuarioAutenticado();
+        return ResponseEntity.ok(usuario);
+    }
+
     @PutMapping("/actualizarClave")
     public ResponseEntity<String> actualizarClave(@RequestBody ActualizarClaveRequest request){
         String confirmacion = usuarioService.actualizarClave(request.getClaveAntigua(), request.getClaveNueva());

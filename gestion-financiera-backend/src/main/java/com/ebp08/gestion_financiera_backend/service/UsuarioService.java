@@ -101,4 +101,9 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "La contraseña actual es incorrecta.");
         }
     }
+
+    public RegistroResponse obtenerUsuarioAutenticado() {
+        Usuario usuarioAutenticado = securityHelper.obtenerUsuarioAutenticado();
+        return new RegistroResponse(usuarioAutenticado, null);
+    }
 }
